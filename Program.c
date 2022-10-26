@@ -1,17 +1,10 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-
-/// <summary>
-/// Creates file with random numbers, and then reads form the file, summing the numbers in the process and outputting the sum.
-/// </summary>
-/// <returns></returns>
-int main()
-{
+int main() {
     // Create and write random numbers to file
     FILE* outFile;
-    outFile = fopen("C:\\Users\\OWNER\\Documents\\College_Fall_2022\\CSCI_474\\C_Practice\\numbers.txt", "w");
+    outFile = fopen("/CSCI474_Proj1/number.txt", "w");
 
     if (outFile != 0) {
         // Time since Jan 1, 1970 to make sure random numbers are not the same
@@ -27,7 +20,7 @@ int main()
     
     // Read and sum numbers from previously made file
     FILE* inFile;
-    inFile = fopen("C:\\Users\\OWNER\\Documents\\College_Fall_2022\\CSCI_474\\C_Practice\\numbers.txt", "r");
+    inFile = fopen("/CSCI474_Proj1/number.txt", "r");
     int total = 0;
     if (inFile != 0) {
         int curr;
@@ -43,6 +36,3 @@ int main()
 
     return 0;
 }
-
-
-
