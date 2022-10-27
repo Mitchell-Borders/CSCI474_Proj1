@@ -4,23 +4,11 @@
 int main() {
     // Create and write random numbers to file
     FILE* outFile;
-    outFile = fopen("/CSCI474_Proj1/number.txt", "w");
-
-    if (outFile != 0) {
-        // Time since Jan 1, 1970 to make sure random numbers are not the same
-        srand(time(NULL));
-        for (int i = 0; i < 100; i++) {
-            // Do 100 numbers to write
-            fprintf(outFile, "%d", rand());
-            fprintf(outFile, "\n");
-
-        }
-        fclose(outFile);
-    }
+    outFile = fopen("numbers.txt", "w");
     
     // Read and sum numbers from previously made file
     FILE* inFile;
-    inFile = fopen("/CSCI474_Proj1/number.txt", "r");
+    inFile = fopen("numbers.txt", "r");
     int total = 0;
     if (inFile != 0) {
         int curr;
