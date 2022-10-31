@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <unistd.h>
+#include <math.h>
 
 
 char * getFileName(int fileNum){
@@ -33,27 +35,53 @@ int getFileNumber(){
     return fileNum;
 }
 
+int getPower(int base, int exponent){
+    int total = 1;
+    for(int i = 0; i < exponent; i++){
+        total *= base;
+    }
+    return total;
+}
+
+void getFileContents(int pipeNum, const char* fileName, int numbers[]){
+    int arrSize = getPower(10, (3+pipeNum));
+    numbers[arrSize];
+        // Read and sum numbers from previously made file
+    FILE* inFile;
+    inFile = fopen(fileName, "r");
+    if (inFile != 0) {
+        int curr;
+        int i = 0;
+        // Sum numbers
+        while (fscanf(inFile, "%d", &curr) != EOF) {
+            numbers[i++] = curr;
+        }
+        // Show total and close file
+        fclose(inFile);
+    }
+}
+
+
+
+
 int main() {
 
     int pipeNum = getNumberPipes();
     int fileNum = getFileNumber();
     const char* fileName = getFileName(fileNum);
+    int numbers[getPower(10, (10, (3+pipeNum)))];
+    getFileContents(pipeNum, fileName, numbers);
 
-    
-    // Read and sum numbers from previously made file
-    FILE* inFile;
-    inFile = fopen(fileName, "r");
-    int total = 0;
-    if (inFile != 0) {
-        int curr;
-        // Sum numbers
-        while (fscanf(inFile, "%d", &curr) != EOF) {
-            total += curr;
-        }
-        // Show total and close file
-        printf("%d", total);
-        fclose(inFile);
+    for(int i = 1; i <= getPower(10, (3+pipeNum)); i++){
+        printf("%d", numbers[i]);
+        printf("\n");
+        // if(fork() == 0){
+        //     startIndex = 
+        //     exit(0);
+        // }
     }
+    
+
     return 0;
 }
 
