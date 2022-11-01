@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
-#include <math.h>
 
 
 char * getFileName(int fileNum){
@@ -29,7 +28,7 @@ int getNumberPipes(){
 int getFileNumber(){
     int fileNum = -1;
     do{
-        printf("Enter how many files to use (1,2, or 3): ");
+        printf("Enter file number to use (1 ,2, or 3), (1000, 10000, or 100000 numbers respectively): ");
         scanf("%d", &fileNum);
     } while(fileNum != 1 && fileNum != 2 && fileNum != 3);
     return fileNum;
@@ -44,7 +43,7 @@ int getPower(int base, int exponent){
 }
 
 void getFileContents(int pipeNum, const char* fileName, int numbers[]){
-    int arrSize = getPower(10, (3+pipeNum));
+    int arrSize = getPower(10, (2+pipeNum));
     numbers[arrSize];
         // Read and sum numbers from previously made file
     FILE* inFile;
@@ -56,32 +55,59 @@ void getFileContents(int pipeNum, const char* fileName, int numbers[]){
         while (fscanf(inFile, "%d", &curr) != EOF) {
             numbers[i++] = curr;
         }
-        // Show total and close file
+        // close file
         fclose(inFile);
     }
 }
 
 
-
-
 int main() {
+    clock_t start = clock();
+
+    int fds[2]; // Pipe
+    pipe(fds);
 
     int pipeNum = getNumberPipes();
     int fileNum = getFileNumber();
     const char* fileName = getFileName(fileNum);
-    int numbers[getPower(10, (10, (3+pipeNum)))];
+    int rowsInFile = getPower(10, (2 + fileNum));
+    // Create array containing all numbers in the list
+    int numbers[rowsInFile];
     getFileContents(pipeNum, fileName, numbers);
 
-    for(int i = 1; i <= getPower(10, (3+pipeNum)); i++){
-        printf("%d", numbers[i]);
-        printf("\n");
-        // if(fork() == 0){
-        //     startIndex = 
-        //     exit(0);
-        // }
+    // Create forks and sum file values
+    int incrementes = rowsInFile / pipeNum;
+    int currStart = 0;
+    int currEnd = incrementes;
+    for(int i = 1; i <= pipeNum; i++){
+        int start = currStart;
+        int end = currEnd;
+        currStart += incrementes;
+        currEnd += incrementes;
+        if(fork() == 0){
+            int total = 0;
+            for(int i = start; i < end; i++){
+                total += numbers[i];
+            }
+            write(fds[1], &total, sizeof(total));
+            exit(0);
+        }
     }
-    
 
+    // Recieve totals from child processes
+    int finalTotal = 0;
+    for(int i = 1; i <= pipeNum; i++){
+        int readTotal = 0;
+        read(fds[0], &readTotal, sizeof(readTotal));
+        printf("Total for child %d : %d\n", i, readTotal);
+        finalTotal += readTotal;
+    }
+    printf("The final total of the file is: %d\n", finalTotal);
+
+    clock_t endTime = clock() - start;
+    double totalTime = ((double)endTime) / CLOCKS_PER_SEC;
+
+    printf("With %d pipes and %d file # selected, the program took %f seconds to run: \n\n\n\n", pipeNum, fileNum, totalTime);
     return 0;
 }
 
