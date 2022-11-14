@@ -47,12 +47,12 @@ int getPower(int base, int exponent){
 }
 
 int main() {
-    // Start timer
-    clock_t start = clock(); 
-
     int childNum = getNumberChild();
     int fileNum = getFileNumber();
     const char* fileName = getFileName(fileNum);
+
+    // Start timer AFTER user input
+    clock_t start = clock();
 
     // Create pipe
     int fds[2];
@@ -73,6 +73,7 @@ int main() {
                 fscanf(inFile, "%d\n", &lineNum);
                 childTotal += lineNum;
             }
+            printf("Total for child %d: %d\n", i + 1, childTotal);
             write(fds[1], &childTotal, sizeof(int));
             exit(0);
         }
@@ -82,14 +83,13 @@ int main() {
     for(int i = 0; i < childNum; i++){
         int childTotal = 0;
         read(fds[0], &childTotal, sizeof(int));
-        printf("Total for child %d: %d\n", i + 1, childTotal);
         finalTotal += childTotal;
     }
     // Print end results
     printf("The final total of the file is: %d\n", finalTotal);
     clock_t endTime = clock() - start;
     double totalTime = ((double)endTime) / CLOCKS_PER_SEC;
-    printf("With %d pipes and file #%d  selected, the program took %f seconds to run: \n\n", childNum, fileNum, totalTime);
+    printf("With %d child processes and file #%d  selected, the program took %f seconds to run: \n\n", childNum, fileNum, totalTime);
 
     return 0;
 }
